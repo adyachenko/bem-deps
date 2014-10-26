@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/floatdrop/bem-deps",
   "devDependencies": {
-    "bem-object": "^1.1.0",
     "coveralls": "^2.7.0",
     "istanbul": "^0.3.0",
     "mocha": "^1.21.4",
@@ -34,10 +33,8 @@
   "dependencies": {
     "bem-object": "^2.0.0",
     "deps-normalize": "^2.0.0",
-    "flatit": "^1.1.0",
     "glue-streams": "^0.1.0",
     "require-or-die": "^0.2.0",
-    "sliced": "^0.0.5",
     "through2": "^0.6.3"
   }
 }
