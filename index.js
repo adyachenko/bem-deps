@@ -3,6 +3,7 @@ var object = require('bem-object');
 var glue = require('glue-streams');
 var join = require('path').join;
 var through = require('through2');
+var normalize = require('deps-normalize');
 
 function BemDeps(levels, options) {
 
@@ -12,7 +13,7 @@ function BemDeps(levels, options) {
 
     options = options || {};
     this.levels = levels;
-    this.normalize = options.normalize;
+    this.normalize = options.normalize || normalize;
 }
 
 BemDeps.prototype.deps = function deps(path) {
