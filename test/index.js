@@ -1,11 +1,11 @@
 /* global describe, it */
 
-var graph = require('..');
+var bem = require('..');
 var assert = require('stream-assert');
 
 describe('levels', function () {
     it('should search block in all levels', function (done) {
-        graph(['base', 'blocks']).deps('blocks/based')
+        bem(['base', 'blocks'], { cwd: __dirname }).deps('blocks/based')
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
@@ -16,7 +16,7 @@ describe('levels', function () {
 
 describe('require', function () {
     it('should add required blocks before target', function (done) {
-        graph(['blocks']).deps('blocks/page')
+        bem(['blocks'], { cwd: __dirname }).deps('blocks/require')
             .pipe(assert.first(function (e) {
                 return e.name === 'required';
             }))
@@ -25,7 +25,7 @@ describe('require', function () {
     });
 
     it('should add required blocks from levels', function (done) {
-        graph(['base', 'blocks']).deps('blocks/page')
+        bem(['base', 'blocks'], { cwd: __dirname }).deps('blocks/require')
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
@@ -36,7 +36,7 @@ describe('require', function () {
 
 describe('expect', function () {
     it('should add expected blocks after target', function (done) {
-        graph(['blocks']).deps('blocks/page')
+        bem(['blocks'], { cwd: __dirname }).deps('blocks/expect')
             .pipe(assert.second(function (e) {
                 return e.name === 'required';
             }))
@@ -45,7 +45,7 @@ describe('expect', function () {
     });
 
     it('should add expect blocks from levels', function (done) {
-        graph(['base', 'blocks']).deps('blocks/page')
+        bem(['base', 'blocks'], { cwd: __dirname }).deps('blocks/expect')
             .pipe(assert.second(function (e) {
                 return e.level === 'base';
             }))
