@@ -2,6 +2,10 @@
 
 var bem = require('..');
 var assert = require('stream-assert');
+var debug = require('through2').obj(function (obj, enc, cb) {
+    console.log(obj);
+    cb(null, obj);
+});
 
 describe('levels', function () {
     it('should search block in all levels', function (done) {
@@ -9,7 +13,10 @@ describe('levels', function () {
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(1))
+            .pipe(assert.second(function (e) {
+                return e.level === 'blocks';
+            }))
+            .pipe(assert.length(2))
             .pipe(assert.end(done));
     });
 });
@@ -29,7 +36,7 @@ describe('require', function () {
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(3))
+            .pipe(assert.length(4))
             .pipe(assert.end(done));
     });
 });
@@ -49,7 +56,7 @@ describe('expect', function () {
             .pipe(assert.second(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(3))
+            .pipe(assert.length(4))
             .pipe(assert.end(done));
     });
 });

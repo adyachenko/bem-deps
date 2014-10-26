@@ -1,3 +1,3 @@
-exports.required = [
-    'foo'
+exports.require = [
+    {block: 'foo'}
 ];

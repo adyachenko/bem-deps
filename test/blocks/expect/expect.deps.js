@@ -1,3 +1,3 @@
 exports.expect = [
-    'foo'
+    {block:'foo'}
 ];
