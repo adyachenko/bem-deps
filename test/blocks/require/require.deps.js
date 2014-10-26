@@ -1,3 +1,3 @@
 exports.require = [
-    {block: 'foo'}
+    'foo'
 ];

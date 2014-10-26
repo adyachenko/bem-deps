@@ -18,18 +18,31 @@ function BemDeps(levels, options) {
     this.cwd = options.cwd;
 }
 
-function patchLevel(level) {
-    return function (bem) {
-        bem.level = level;
-        return bem;
-    };
-}
-
 BemDeps.prototype._parentLevels = function _parentLevels(bem) {
     var idx = this.levels.indexOf(bem.level);
     return this.levels.filter(function (e, i) {
         return i <= idx;
     });
+};
+
+BemDeps.prototype.required = function required(value, level) {
+    var self = this;
+    value.require = value.require || value.mustDeps || [];
+    return self.normalize(value.require.map(function (req) {
+        if (typeof req === 'string') { req = new object(req, self.options); }
+        req.level = level;
+        return req;
+    }));
+};
+
+BemDeps.prototype.expected = function expected(value, level) {
+    var self = this;
+    value.expect = value.expect || value.shouldDeps || [];
+    return self.normalize(value.expect.map(function (exp) {
+        if (typeof exp === 'string') { exp = new object(exp, self.options); }
+        exp.level = level;
+        return exp;
+    }));
 };
 
 BemDeps.prototype.deps = function deps(path) {
@@ -61,13 +74,8 @@ BemDeps.prototype.deps = function deps(path) {
                 return;
             }
 
-            var normalizedRequire = self.normalize(value.require || value.mustDeps || []).map(patchLevel(level));
-            var requireDeps = normalizedRequire.map(self.deps, self);
-            glue.obj.apply(glue, requireDeps).pipe(required);
-
-            var normalizedExpect = self.normalize(value.expect || value.shouldDeps || []).map(patchLevel(level));
-            var expectDeps = normalizedExpect.map(self.deps, self);
-            glue.obj.apply(glue, expectDeps).pipe(expected);
+            glue.obj.apply(glue, self.required(value, level).map(self.deps, self)).pipe(required);
+            glue.obj.apply(glue, self.expected(value, level).map(self.deps, self)).pipe(expected);
         });
     });
 
