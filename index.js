@@ -18,27 +18,49 @@ function BemDeps(levels, options) {
     this.cwd = options.cwd;
 }
 
+BemDeps.prototype._parentLevels = function _parentLevels(bem) {
+    var idx = this.levels.indexOf(bem.level);
+    return this.levels.filter(function (e, i) {
+        return i <= idx;
+    });
+};
+
 BemDeps.prototype.deps = function deps(path) {
     var self = this;
 
     var bem = new object(path, self.options);
-    var output = through.obj();
 
-    // TODO: block could be in upper levels
-    // TODO: deps.js file could be not in strict directory
-    rod(join(self.cwd, bem.level, bem.block, bem.id + '.deps.js'), function (err, value) {
-        if (err) { return output.emit('error', err); }
+    var streams = {
+        required: [],
+        blocks: [],
+        expected: []
+    };
 
-        var required = self.normalize(value.require || value.mustDeps)
-            .map(deps, self);
+    var parents = this._parentLevels(bem);
 
-        var expected = self.normalize(value.expect || value.shouldDeps)
-            .map(deps, self);
+    parents.map(function (parentLevel) {
+        var required = through.obj();
+        streams.required.push(required);
 
-        glue(required, bem, expected).pipe(output);
+        var expected = through.obj();
+        streams.expected.push(expected);
+
+        streams.blocks.push(new object(parentLevel + '/' + bem.id));
+
+        rod(join(self.cwd, bem.level, bem.block, bem.id + '.deps.js'), function (err, value) {
+            if (err) {
+                required.end();
+                expected.end();
+                return;
+                // throw new Error(err);
+            }
+
+            glue.obj(self.normalize(value.require || value.mustDeps).map(deps, self)).pipe(required);
+            glue.obj(self.normalize(value.expect || value.shouldDeps).map(deps, self)).pipe(expected);
+        });
     });
 
-    return output;
+    return glue.obj(streams.required, streams.blocks, streams.expected);
 };
 
 module.exports = BemDeps;
