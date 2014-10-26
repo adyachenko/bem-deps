@@ -1,0 +1,38 @@
+{
+  "name": "bem-deps",
+  "version": "0.0.0",
+  "description": "Gets dependencies as BEM objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec test",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:floatdrop/bem-deps.git"
+  },
+  "keywords": [
+    "BEM",
+    "graph",
+    "deps"
+  ],
+  "author": "Vsevolod Strukchinsky <floatdrop@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/floatdrop/bem-deps/issues"
+  },
+  "homepage": "https://github.com/floatdrop/bem-deps",
+  "devDependencies": {
+    "bem-object": "^1.1.0",
+    "coveralls": "^2.7.0",
+    "istanbul": "^0.3.0",
+    "mocha": "^1.21.4",
+    "mocha-lcov-reporter": "^0.0.1",
+    "should": "^4.0.4",
+    "stream-assert": "^2.0.2"
+  },
+  "dependencies": {
+    "flatit": "^1.1.0",
+    "sliced": "^0.0.5"
+  }
+}
