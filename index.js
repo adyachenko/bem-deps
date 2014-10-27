@@ -2,6 +2,7 @@ var rod = require('require-or-die');
 var object = require('bem-object');
 var glue = require('glue-streams');
 var join = require('path').join;
+var resolve = require('path').resolve;
 var through = require('through2');
 var normalize = require('deps-normalize');
 
@@ -11,9 +12,9 @@ function BemDeps(levels, options) {
     }
 
     options = options || {};
+    options.cwd = options.cwd || '';
 
-    this.cwd = options.cwd || '';
-    this.levels = levels;
+    this.levels = levels.map(function (l) { return resolve(options.cwd, l); });
     this.normalize = options.normalize || normalize;
 }
 
@@ -44,10 +45,17 @@ BemDeps.prototype.expected = function expected(value, level) {
     }));
 };
 
-BemDeps.prototype.deps = function deps(path) {
+BemDeps.prototype.deps = function deps(path, options) {
     var self = this;
-    var bem = new object(path, self.options);
 
+    options = options || {};
+    options.cwd = options.cwd || '';
+
+    if (typeof path === 'string') {
+        path = resolve(options.cwd, path);
+    }
+
+    var bem = new object(path, self.options);
     var parents = this._parentLevels(bem);
 
     var streams = {
@@ -63,9 +71,9 @@ BemDeps.prototype.deps = function deps(path) {
         var expected = through.obj();
         streams.expected.push(expected);
 
-        streams.blocks.push(new object(level + '/' + bem.id));
+        streams.blocks.push(new object(join(level, bem.id)));
 
-        rod(join(self.cwd, level, bem.block, bem.id + '.deps.js'), function (err, value) {
+        rod(join(level, bem.block, bem.id + '.deps.js'), function (err, value) {
             if (err) {
                 // No deps.js file -> no dependencies
                 required.end();
