@@ -2,10 +2,6 @@
 
 var bem = require('..');
 var assert = require('stream-assert');
-var debug = require('through2').obj(function (obj, enc, cb) {
-    console.log(obj);
-    cb(null, obj);
-});
 
 describe('levels', function () {
     it('should search block in all levels', function (done) {

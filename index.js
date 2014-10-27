@@ -6,16 +6,15 @@ var through = require('through2');
 var normalize = require('deps-normalize');
 
 function BemDeps(levels, options) {
-
     if (!(this instanceof BemDeps)) {
         return new BemDeps(levels, options);
     }
 
     options = options || {};
 
+    this.cwd = options.cwd || '';
     this.levels = levels;
     this.normalize = options.normalize || normalize;
-    this.cwd = options.cwd;
 }
 
 BemDeps.prototype._parentLevels = function _parentLevels(bem) {
