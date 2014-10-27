@@ -14,6 +14,9 @@ function BemDeps(levels, options) {
     options = options || {};
     options.cwd = options.cwd || '';
 
+    if (!levels) { throw new Error('levels argument is requried'); }
+    if (typeof levels === 'string') { levels = [ levels ]; }
+
     this.levels = levels.map(function (l) { return resolve(options.cwd, l); });
     this.normalize = options.normalize || normalize;
 }
