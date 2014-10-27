@@ -1,6 +1,6 @@
 {
   "name": "bem-deps",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Gets dependencies as BEM objects",
   "main": "index.js",
   "scripts": {
