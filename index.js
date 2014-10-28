@@ -59,6 +59,13 @@ function setParent(parent) {
     };
 }
 
+BemDeps.prototype._path = function _path(dep) {
+    var result = join(dep.level, dep.block);
+    if (dep.elem) { result = join(result, this.options.elem + dep.elem); }
+    if (dep.mod) { result = join(result, this.options.mod + dep.mod); }
+    return result;
+};
+
 BemDeps.prototype._deps = function _deps(path, options) {
     var self = this;
 
@@ -85,7 +92,7 @@ BemDeps.prototype._deps = function _deps(path, options) {
         var parent = new object(join(level, bem.id));
         blocks.push(parent);
 
-        var depsFile = join(level, bem.block, bem.id + '.deps.js');
+        var depsFile = join(self._path(bem), bem.id + '.deps.js');
 
         if (!fs.existsSync(depsFile)) {
             return;

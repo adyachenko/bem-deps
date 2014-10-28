@@ -9,7 +9,7 @@ var assert = require('stream-assert');
 
 describe('levels', function () {
     it('should search block in all levels', function (done) {
-        bem(['test/base', 'test/blocks']).deps('test/blocks/based')
+        bem(['test/base', 'test/blocks']).deps('test/blocks/foo')
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
@@ -36,7 +36,7 @@ describe('require', function () {
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(4))
+            .pipe(assert.length(5))
             .pipe(assert.end(done));
     });
 });
@@ -56,7 +56,7 @@ describe('expect', function () {
             .pipe(assert.second(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(4))
+            .pipe(assert.length(5))
             .pipe(assert.end(done));
     });
 });
