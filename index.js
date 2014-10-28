@@ -14,12 +14,15 @@ function BemDeps(levels, options) {
 
     options = options || {};
     options.cwd = options.cwd || '';
+    options.elem = options.elem || '__';
+    options.mod = options.mod || '_';
 
     if (!levels) { throw new Error('levels argument is requried'); }
     if (typeof levels === 'string') { levels = [ levels ]; }
 
     this.levels = levels.map(function (l) { return resolve(options.cwd, l); });
     this.normalize = options.normalize || normalize;
+    this.options = options;
 }
 
 BemDeps.prototype._parentLevels = function _parentLevels(bem) {
@@ -51,10 +54,10 @@ BemDeps.prototype.expected = function expected(value, level) {
     }));
 };
 
-function setParent(parent) {
+function copyFrom(parent) {
     return function (bem) {
-        bem.parent = parent;
         parent.copy(bem);
+        bem.level = parent.level;
         return bem;
     };
 }
@@ -65,6 +68,8 @@ BemDeps.prototype._path = function _path(dep) {
     if (dep.mod) { result = join(result, this.options.mod + dep.mod); }
     return result;
 };
+
+var cache = {};
 
 BemDeps.prototype._deps = function _deps(path, options) {
     var self = this;
@@ -84,39 +89,56 @@ BemDeps.prototype._deps = function _deps(path, options) {
     var expected = [];
 
     parents.map(function (level) {
+        var parent = new object(join(level, bem.id));
+
         // Temporary hack to filter out non-existent entities
-        if (!fs.existsSync(join(level, bem.block))) {
+        if (!fs.existsSync(self._path(parent))) {
             return;
         }
 
-        var parent = new object(join(level, bem.id));
         blocks.push(parent);
 
-        var depsFile = join(self._path(bem), bem.id + '.deps.js');
+        var depsFile = join(self._path(parent), bem.id + '.deps.js');
 
         if (!fs.existsSync(depsFile)) {
             return;
         }
 
-        var value = rod.sync(depsFile);
-        required = required.concat(
-            self.required(value, level)
-                .map(setParent(parent))
-                .map(self._deps, self)
-        );
+        if (!cache[depsFile]) {
+            cache[depsFile] = {
+                required: [],
+                expected: []
+            };
 
-        expected = expected.concat(
-            self.expected(value, level)
-                .map(setParent(parent))
-                .map(self._deps, self)
-        );
+            var value = rod.sync(depsFile);
+
+            cache[depsFile].required = self.required(value, level)
+                .map(copyFrom(parent))
+                .map(self._deps, self);
+
+            // if (depsFile === '/Users/floatdrop/yagulp/vendors/bem-bl/blocks-common/i-bem/i-bem.deps.js') {
+            //     console.log(self.required(value, level).map(copyFrom(parent)));
+            // }
+
+            cache[depsFile].expected = self.expected(value, level)
+                .map(copyFrom(parent))
+                .map(self._deps, self);
+        }
+
+        required = required.concat(cache[depsFile].required);
+        expected = expected.concat(cache[depsFile].expected);
+
+        // console.log();
+        // console.log(depsFile);
+        // console.log(required);
     });
 
     return flatit([required, blocks, expected]);
 };
 
 BemDeps.prototype.deps = function deps(path, options) {
-    return array(this._deps(path, options));
+    var a = this._deps(path, options);
+    return array(a);
 };
 
 module.exports = BemDeps;
