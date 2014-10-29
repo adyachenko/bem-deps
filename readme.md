@@ -37,6 +37,17 @@ Returns `Stream` of [BEM objects](https://github.com/floatdrop/gulp-bem#bem-obje
 
 Stream emits dependencies in order, that defined by `require` and `expect` of corresponding BEM objects and levels of declaration.
 
+###### bem
+Type: `string`
+
+Bem entity path:
+
+```js
+deps('level/block');
+deps('level/block__elem');
+deps('level/block_mod');
+```
+
 ## License
 
 MIT (c) 2014 Vsevolod Strukchinsky
