@@ -36,7 +36,7 @@ describe('require', function () {
             .pipe(assert.first(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(5))
+            .pipe(assert.length(3))
             .pipe(assert.end(done));
     });
 });
@@ -56,7 +56,7 @@ describe('expect', function () {
             .pipe(assert.second(function (e) {
                 return e.level === 'base';
             }))
-            .pipe(assert.length(5))
+            .pipe(assert.length(3))
             .pipe(assert.end(done));
     });
 });

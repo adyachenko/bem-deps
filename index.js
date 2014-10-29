@@ -116,10 +116,6 @@ BemDeps.prototype._deps = function _deps(path, options) {
                 .map(copyFrom(parent))
                 .map(self._deps, self);
 
-            // if (depsFile === '/Users/floatdrop/yagulp/vendors/bem-bl/blocks-common/i-bem/i-bem.deps.js') {
-            //     console.log(self.required(value, level).map(copyFrom(parent)));
-            // }
-
             cache[depsFile].expected = self.expected(value, level)
                 .map(copyFrom(parent))
                 .map(self._deps, self);
@@ -127,10 +123,6 @@ BemDeps.prototype._deps = function _deps(path, options) {
 
         required = required.concat(cache[depsFile].required);
         expected = expected.concat(cache[depsFile].expected);
-
-        // console.log();
-        // console.log(depsFile);
-        // console.log(required);
     });
 
     return flatit([required, blocks, expected]);

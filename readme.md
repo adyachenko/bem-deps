@@ -2,7 +2,19 @@
 
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
-This module gets dependencies for BEM entity as [BEM objects](https://github.com/floatdrop/gulp-bem#bem-object). It relies on `require` and `expect` properties in BEM objects to build connections between blocks.
+This module reads `deps.js` files from requested bem block recursivly and returns a Stream of [bem objects](https://github.com/floatdrop/gulp-bem#bem-object) which can be queried for files.
+
+`deps.js` file exports object with `require` and/or `expect` property:
+
+```js
+// foo.deps.js
+export.require = ['one-block', 'two-block', {block: 'three-block'}];
+export.expect = ['after'];
+```
+
+Required blocks will be added to stream before __foo__ block and expected blocks will be added after __foo__.
+
+All elements of `require` and `expect` are normalized with [deps-normalize](https://github.com/floatdrop/deps-normalize) be default.
 
 ## API
 
@@ -20,7 +32,7 @@ Type: `Object`
 
  * `normalize` - sets normalization funciton (default: [deps-normalize](https://github.com/floatdrop/deps-normalize))
 
-### deps(bem, [parents...])
+### deps(bem)
 Returns `Stream` of [BEM objects](https://github.com/floatdrop/gulp-bem#bem-object) - all dependencies for `bem` block.
 
 Stream emits dependencies in order, that defined by `require` and `expect` of corresponding BEM objects and levels of declaration.
