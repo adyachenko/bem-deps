@@ -65,7 +65,7 @@ function copyFrom(parent) {
 BemDeps.prototype._path = function _path(dep) {
     var result = join(dep.level, dep.block);
     if (dep.elem) { result = join(result, this.options.elem + dep.elem); }
-    if (dep.mod) { result = join(result, this.options.mod + dep.mod); }
+    if (dep.modName) { result = join(result, this.options.mod + dep.modName); }
     return result;
 };
 
