@@ -2,6 +2,9 @@
 
 var bem = require('..');
 var assert = require('stream-assert');
+var join = require('path').join;
+var should = require('should');
+
 // var debug = require('through2').obj(function (obj, enc, cb) {
 //     console.log(obj);
 //     cb(null, obj);
@@ -57,6 +60,19 @@ describe('expect', function () {
                 return e.level === 'base';
             }))
             .pipe(assert.length(3))
+            .pipe(assert.end(done));
+    });
+});
+
+describe('require modifier', function () {
+    it('should add required modifier of a block before target', function (done) {
+        var b = bem(['test/blocks']);
+        b.deps('test/blocks/require-modifier')
+            .pipe(assert.first(function (dep) {
+                var p = join(b._path(dep), dep.id + '.deps.js');
+                return p.should.match(/test\/blocks\/foo\/_mode\/foo_mode_bar.deps.js$/);
+            }))
+            .pipe(assert.length(2))
             .pipe(assert.end(done));
     });
 });
