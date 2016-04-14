@@ -111,6 +111,9 @@ BemDeps.prototype._deps = function _deps(path, options) {
             };
 
             var value = rod.sync(depsFile);
+            if (Array.isArray(value)) {
+                value = value[0];
+            }
 
             cache[depsFile].required = self.required(value, level)
                 .map(copyFrom(parent))
