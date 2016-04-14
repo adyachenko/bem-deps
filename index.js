@@ -6,6 +6,7 @@ var normalize = require('deps-normalize');
 var fs = require('fs');
 var flatit = require('flatit');
 var array = require('stream-array');
+var _ = require('lodash');
 
 function BemDeps(levels, options) {
     if (!(this instanceof BemDeps)) {
@@ -128,7 +129,7 @@ BemDeps.prototype._deps = function _deps(path, options) {
         expected = expected.concat(cache[depsFile].expected);
     });
 
-    return flatit([required, blocks, expected]);
+    return _.union(flatit([required, blocks, expected]));
 };
 
 BemDeps.prototype.deps = function deps(path, options) {
