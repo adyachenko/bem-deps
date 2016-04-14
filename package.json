@@ -37,6 +37,7 @@
     "glue-streams": "^0.1.0",
     "require-or-die": "^1.0.0",
     "stream-array": "^1.0.0",
-    "through2": "^0.6.3"
+    "through2": "^0.6.3",
+    "lodash": "^3.10.1"
   }
 }
